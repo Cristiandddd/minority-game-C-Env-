@@ -435,7 +435,7 @@ void run_sweep_training(const std::map<std::string, std::string>& args) {
             
             std::vector<double> eval_rewards;
             std::vector<double> eval_win_rates;
-            std::vector<double> non_rl_avg_win_rates;
+            std::vector<double> non_rl_std_win_rates_vec;
             
             for (int episode = 0; episode < eval_episodes; episode++) {
                 Observation obs = eval_env.reset();
@@ -451,7 +451,7 @@ void run_sweep_training(const std::map<std::string, std::string>& args) {
                     if (terminated) {
                         eval_rewards.push_back(total_reward);
                         eval_win_rates.push_back(info.win_rate);
-                        non_rl_avg_win_rates.push_back(eval_env.get_non_rl_avg_win_rate());
+                        non_rl_std_win_rates_vec.push_back(eval_env.get_non_rl_std_win_rate());
                         break;
                     }
                 }
@@ -468,8 +468,8 @@ void run_sweep_training(const std::map<std::string, std::string>& args) {
             double avg_win_rate = TrainingUtils::calculate_mean(eval_win_rates);
             double std_win_rate = TrainingUtils::calculate_std(eval_win_rates);
             
-            double non_rl_avg_wr = TrainingUtils::calculate_mean(non_rl_avg_win_rates);
-            double non_rl_std_wr = TrainingUtils::calculate_std(non_rl_avg_win_rates);
+            double non_rl_avg_wr = eval_env.get_non_rl_avg_win_rate();
+            double non_rl_std_wr = TrainingUtils::calculate_mean(non_rl_std_win_rates_vec);
             
             // Print results
             std::cout << "Results for " << num_players << " players:" << std::endl;
